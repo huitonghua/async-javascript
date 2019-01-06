@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Promise</title>
+</head>
+
+<body>
+    <script>
+        /*
+            增加串行Promise
+        */
+        function Promise(Fn) {
+            let resolveCall = function () {
+                console.log("我是默认的")
+            }
+
+            this.resolves = [];
+            // 初始化为pendding状态
+            this.status = "PENDING";
+            this.value;
+            //增加失败处理
+            this.reason;
+            this.rejects = [];
+            if (this.status === "PENDING") {
+                this.rejects.push(onRejected);
+            }
+            //如果状态是rtejected,则立即执行rejected
+            if (this.status === "REJECTED") {
+                onRejected(this.reason);
+            }
+
+            //改为箭头函数，避免this丢失
+            // let resolve = (value) => {
+            //     if (this.status === "PENDING") {
+            //         setTimeout(() => {
+            //             this.status = "FULFILLED";
+            //             //增加返回值，有的话更新value
+            //             this.resolves.forEach(fn => value = fn(value) || value);
+            //             this.value = value;
+            //         })
+            //     }
+            // }
+            if (this.status === "PENDING") {
+                let transition = (statu, val) => {
+                    setTimeout(() => {
+                        this.status = status;
+                        let f = status === "FULFILLED",
+                            queue = this[f ? "resolves" : "rejects"];
+                        queue.forEach(fn => val = fn(val) || val);
+                        this[f ? "value" : "reason"] = val;
+                    })
+                }
+                let resolve = transition("FULFILLED", value);
+                let reject = transition("REJECTED", reason);
+            }
+            Fn(resolve);
+
+        }
+
+        // 把then方法放在原型上：
+        Promise.prototype.then = function (onFulfilled, onRejected) {
+            let promise = this;
+            return new Promise((resolve, reject) => {
+                
+            })
+        }
+
+        //原型上挂载reject方法
+        // Promise.prototype.reject = function (reason) {
+        //     if (this.statu === "PENDING") {
+        //         setTimeout(() => {
+        //             //状态转换为rejected
+        //             // 如果回调有返回值，更新当前reason
+        //             this.status = "REJECTED";
+        //             this.rejects.forEach(fn => reson = fn(reason) || reason);
+        //             this.reason = reason;
+        //         })
+        //     }
+        // }
+
+        //这里和promise标准不符合，每次then回调都会拿到值
+        new Promise((resolve, reject) => {
+            setTimeout(data => {
+                resolve("success")
+            }, 200)
+        }).then(r => {
+            console.log(r);
+            // return "hello beautiful";
+        }).then(r => console.log(r));
+    </script>
+</body>
+
+</html>

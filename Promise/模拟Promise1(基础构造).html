@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Promise</title>
+</head>
+
+<body>
+    <script>
+        /*
+            基础构造
+        */
+        function Promise(Fn) {
+            let resolveCall = function () {
+                console.log("我是默认的")
+            }
+
+            this.then = (onFulfilled) => {
+                resolveCall = onFulfilled;
+            }
+
+            //加上异步处理，保证then方法先执行
+            function resolve(v) {
+                // resolveCall(v);
+                setTimeout(() => {
+                    resolveCall(v);
+                })
+            }
+
+            Fn(resolve);
+
+        }
+       
+
+        new Promise((resolve, reject) => {
+            setTimeout(data => {
+                resolve("success")
+            }, 200)
+        }).then(r => {
+            console.log(r)
+        })
+    </script>
+</body>
+
+</html>

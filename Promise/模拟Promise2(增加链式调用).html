@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Promise</title>
+</head>
+
+<body>
+    <script>
+        /*
+            增加链式调用
+        */
+        function Promise(Fn) {
+            let resolveCall = function () {
+                console.log("我是默认的")
+            }
+
+            this.resolves = [];
+            this.then = (onFulfilled) => {
+                this.resolves.push(onFulfilled);
+                return this;
+            }
+
+            //加上异步处理，保证then方法先执行
+            //改为箭头函数，避免this丢失
+            let resolve = (value) => {
+                setTimeout(() => {
+                    //增加返回值，有的话更新value
+                    this.resolves.forEach(fn => value = fn(value) || value);
+                })
+            }
+            Fn(resolve);
+
+        }
+        //这里和promise标准不符合，每次then回调都会拿到值
+        // 这是应为Promise标准每次执行then方法返回一个新的Promise实例
+        new Promise((resolve, reject) => {
+            setTimeout(data => {
+                resolve("success")
+            }, 200)
+        }).then(r => {
+            console.log(r);
+            return "hello beautiful";
+        }).then(r => console.log(r));
+    </script>
+</body>
+
+</html>
